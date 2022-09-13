@@ -1,0 +1,122 @@
+version: '3.9'
+services:
+  mysql1:
+    image: 'mysql:8.0'
+    hostname: 'source'
+    container_name: 'mysql_source'
+    restart: always
+    command: --authentication_policy=mysql_native_password --server-id=101 --log-bin=mysqld-bin.log --gtid-mode=on --enforce-gtid-consistency
+    volumes:
+      - $PWD/sqlscripts:/sqlscripts/
+    ports:
+      - '3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=t00r
+    cap_add:
+      - SYS_NICE
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-uroot",
+          "-p$$MYSQL_ROOT_PASSWORD"
+        ]
+      timeout: 10s
+      retries: 5
+
+  mysql2:
+    image: 'mysql:8.0'
+    hostname: 'replica1'
+    container_name: 'mysql_replica1'
+    restart: always
+    command: --authentication_policy=mysql_native_password --server-id=102 --log-bin=mysqld-bin.log --gtid-mode=on --enforce-gtid-consistency --read-only
+    volumes:
+      - $PWD/sqlscripts:/sqlscripts/
+    ports:
+      - '3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=t00r
+    cap_add:
+      - SYS_NICE
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-uroot",
+          "-p$$MYSQL_ROOT_PASSWORD"
+        ]
+      timeout: 10s
+      retries: 5
+
+  mysql3:
+    image: 'mysql:8.0'
+    hostname: 'replica2'
+    container_name: 'mysql_replica2'
+    restart: always
+    command: --authentication_policy=mysql_native_password --server-id=103 --log-bin=mysqld-bin.log --gtid-mode=on --enforce-gtid-consistency --read-only
+    volumes:
+      - $PWD/sqlscripts:/sqlscripts/
+    ports:
+      - '3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=t00r
+    cap_add:
+      - SYS_NICE
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-uroot",
+          "-p$$MYSQL_ROOT_PASSWORD"
+        ]
+      timeout: 10s
+      retries: 5
+
+  mysql4:
+    image: 'mysql:8.0'
+    hostname: 'replica3'
+    container_name: 'mysql_replica3'
+    restart: always
+    command: --authentication_policy=mysql_native_password --server-id=104 --log-bin=mysqld-bin.log --gtid-mode=on --enforce-gtid-consistency --read-only
+    volumes:
+      - $PWD/sqlscripts:/sqlscripts/
+    ports:
+      - '3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=t00r
+    cap_add:
+      - SYS_NICE
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-uroot",
+          "-p$$MYSQL_ROOT_PASSWORD"
+        ]
+      timeout: 10s
+      retries: 5
+
+  proxysql1:
+    ports:
+      - '6032:6032'
+      - '6033:6033'
+    volumes:
+      - $PWD/proxysql/proxysql.cnf:/etc/proxysql.cnf:ro
+    image: proxysql/proxysql
+    depends_on:
+      mysql1:
+        condition: service_healthy
+      mysql2:
+        condition: service_healthy
+      mysql3:
+        condition: service_healthy
+      mysql4:
+        condition: service_healthy
