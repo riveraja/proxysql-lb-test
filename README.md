@@ -27,7 +27,7 @@ Check if backend servers are `ONLINE`:
 $ docker run \
 --rm=true \
 --name=sb-schema \
---network=proxysql-test_default \
+--network=proxysql-lb-test_default \
 sysbench-docker \
 mysql \
 --user=radmin \
@@ -50,7 +50,7 @@ Login to proxysql admin interface:
 $ docker run \
 --rm=true \
 --name=sb-schema \
---network=proxysql-test_default \
+--network=proxysql-lb-test_default \
 sysbench-docker \
 mysql \
 --user=radmin \
@@ -65,7 +65,7 @@ Create the schema:
 $ docker run \
 --rm=true \
 --name=sb-schema \
---network=proxysql-test_default \
+--network=proxysql-lb-test_default \
 sysbench-docker \
 mysql \
 --user=root \
@@ -80,7 +80,7 @@ Prepare the sysbench database:
 $ docker run \
 --rm=true \
 --name=sb-prepare \
---network=proxysql-test_default \
+--network=proxysql-lb-test_default \
 sysbench-docker \
 sysbench \
 --db-ps-mode=disable \
@@ -102,7 +102,7 @@ Run the benchmark for MySQL:
 $ docker run \
 --rm=true \
 --name=sb-run \
---network=proxysql-test_default \
+--network=proxysql-lb-test_default \
 sysbench-docker \
 sysbench \
 --db-ps-mode=disable \
@@ -127,7 +127,7 @@ Get connection pool statistics
 $ docker run \
 --rm=true \
 --name=sb-schema \
---network=proxysql-test_default \
+--network=proxysql-lb-test_default \
 sysbench-docker \
 mysql \
 --user=radmin \
